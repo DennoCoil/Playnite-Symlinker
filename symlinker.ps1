@@ -9,8 +9,8 @@ $CurrentGame = Null
 Some methods to work with
 
 			JSON_ORIGINAL_EXTENSION_NAME  (String:  The 2\3 letter extension used to launch with the emulator)  
-			JSON_INSERT_DESTINATION_PATH  (String)
-			JSON_INSERT_ORIGINAL_PATH  (String)
+			JSON_DESTINATION_PATH  (String)
+			JSON_ORIGINAL_PATH  (String)
 			JSON_IS_COMPRESSED  (BOOL: Checks if said game entry is compressed.)
 			JSON_IS_SYMLINKED  (BOOL: Checks if a Symlink is made)
 #>
@@ -49,6 +49,7 @@ Some methods to work with
 <#LOGGED:  Write to the log that MENU item was selected.  Use this at the beginning of each Menu option.
 
 SET_LOGGED {
+			Set $MenuX variable
 			Check the LOGS
 			If it shows incomplete JOBS
 					LOG:  Incomplete JOBS found
@@ -107,21 +108,43 @@ DONE #>
 				Mark game as uninstalled on Playnite
 				LOG:  "Game marked as Uninstalled"
 			LOG:  "All games successfully compressed."
+			
+			Folder where game was is now archived, the folder deleted, and marked "Uninstalled."
 #>
 
-<#Menu 4:	"Extract selected game(s) from archives to the Destination folder and be Playable."
+<#Menu 4:	"Extract selected game(s) from archives to the Played."
+			"Extract selected game(s) from archives to the Destination folder and be Playable."
+
+Got a problem.  I can't just plug anything into the Script areas.  Other people might be angry at what I overwrite.
+
+How to "Be playable"?
+
+Set uninstalled as Installed?
+
+
 
 			LOGGED
 			CHECK_SELECTED_FOLDER
 			FOR-EACH LOOP of $_.SelectedGames
-				
-				
-				$InstallationFolder = Some Playnite API
+				Get the Playnite Numerical ID ($MatchingID) of said game
+				Look inside JSON for the $MatchingID number
+				If not found, throw an error message and log:
+					"The requested archive wasn't found in the database."
+					BREAK
+				GET location of $SavedArchive of the game that has the $MatchingID
+				7z Script:  Extract $SavedArchive to $DestinationFolder -OverWriteAll
+				Overwrite Play state for game with $MatchingID within Playnite
+					to point towards the 
+				SET JSON for $MatchingID as Playable
+			
+			
+			
+				$InstallationFolder = $Some.Playnite.API
 				If ($InstallationFolder = Null)
 					Throw ERROR Message
 					BREAK
-					
-				)Test variable IF it's not NULL
+				GET $JSON.ArchiveLocation
+				Test variable IF it's not NULL
 				IF Null, throw LOG and ShowMessage(): "There was no path in Playnite for $THIS_GAME."
 				IF NOT NULL and returns TRUE--
 				LOG:  Folder found.  Now Tagging MOVING of CURRENT_GAME to Destination Path
